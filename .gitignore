@@ -1,0 +1,4 @@
+my-firebase.json
+*.json
+!package.json
+!package-lock.jsons
