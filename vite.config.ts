@@ -9,14 +9,13 @@ export default defineConfig({
   publicDir: 'public',
   server: {
     port: 3000,
-    open: '/index.html'
-  },
+    strictPort: true,
+    open: true
+   },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    rollupOptions: {
-      input: resolve(__dirname, 'public/index.html')
-    }
+   
   },
   resolve: {
     alias: {
