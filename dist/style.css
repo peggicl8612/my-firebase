@@ -198,14 +198,12 @@ transform: translateY(-2px);
 
 .choice-btn:hover {
   background: #7e766a;
-  transform: scale(1.05);
-}
+ }
 
 .choice-btn.selected {
   background: #774b2e;
   border-color: #b99b88;
-  transform: scale(1.15);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
   font-weight: bold;
 }
 
@@ -459,7 +457,7 @@ transform: translateY(-2px);
 
 .icon-btn:hover {
     background: #777;
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
  
@@ -517,7 +515,7 @@ transform: translateY(-2px);
 
 #step-2-join:hover {
     background: #777;
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 @keyframes fadeIn {
