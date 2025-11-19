@@ -108,8 +108,12 @@ if (anonymousLoginBtn) {
             await loginAnonymously()
         } catch (error) {
             console.error('匿名登入失敗:', error)
-            alert('匿名登入失敗，請確認 Firebase Console 中已啟用匿名認證功能')
-        }
+            ElMessage({
+                message: '匿名登入失敗，請確認 Firebase Console 中已啟用匿名認證功能',
+                type: 'error',
+                customClass: 'custom-message'
+            })
+         }
     })
 }
 
@@ -183,17 +187,30 @@ if (registerBtn && emailInput && passwordInput) {
             try {
                 await registerWithEmail(email, password, userName)
                 // 等待一下確保 updateProfile 完成，然後重置頁面狀態
+                // 等待一下確保 updateProfile 完成
                 setTimeout(() => {
-                    resetPageState()
+                    // 清空輸入框
+                    if (emailInput) emailInput.value = ''
+                    if (passwordInput) passwordInput.value = ''
+                    if (usernameInput) usernameInput.value = ''
+
                     // 更新用戶名顯示（使用最新的 auth.currentUser）
                     const currentUser = auth.currentUser
                     const userInfo = document.getElementById('user-info')
                     if (userInfo && currentUser) {
                         userInfo.textContent = `使用者${currentUser.displayName || userName || '匿名用戶'}`
                     }
+                    
+                    // 確保顯示 Step 1 (雖然 onAuthChange 應該已經處理了，但為了保險起見)
+                    const step1 = document.getElementById('onboarding-step-1')
+                    if (step1) step1.style.display = 'flex'
                 }, 100)
-                alert('註冊成功！')
-            } catch (error) {
+                ElMessage({
+                    message: '註冊成功',
+                    type: 'success',
+                    customClass: 'custom-message'
+                })
+             } catch (error) {
                 console.error('註冊失敗:', error)
                 // 錯誤類型處理
                 if ((error as any).code === 'auth/email-already-in-use') {
@@ -586,7 +603,13 @@ function updateGameUI(gameData: any) {
             // 隱藏遮罩
             if (overlay) overlay.style.display = 'none'
             
-            alert('遊戲已結束，對手已離開')
+             ElMessage({
+                 message: '遊戲已結束，對手已離開',
+                 type: 'info',
+                 duration: 3000,
+                 offset: window.innerHeight - 100,
+                 customClass: 'bottom-message'
+            })
             // 重置回初始狀態
             resetPageState()
             return

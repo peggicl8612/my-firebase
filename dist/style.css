@@ -8,18 +8,17 @@
 body {
   background: #726e6e;
    padding: 20px;
-   } 
+  /* overflow: hidden; */
+ } 
 
 #app {
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
- 
 }
 
 /* 登入區域 */
 #login-section {
-  
   background: white;
   border-radius: 12px;
   padding: 40px;
