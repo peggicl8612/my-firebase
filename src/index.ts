@@ -310,6 +310,9 @@ function initChat(startTime?: Date) {
             }
         }
     }
+
+
+
 }
 
 // 遊戲初始化
@@ -341,8 +344,8 @@ function initGame() {
     const gameSection = document.getElementById('game-section')
     const nicknameInput = document.getElementById('onboarding-nickname') as HTMLInputElement
 
-    if (step1NextBtn) {
-        step1NextBtn.onclick = async () => {
+    if (step1NextBtn && nicknameInput) {
+        const handleStep1Next = async () => {
             const nickname = nicknameInput.value.trim()
             if (nickname) {
                 if (auth.currentUser) {
@@ -361,6 +364,14 @@ function initGame() {
                     offset: window.innerHeight - 100,
                     customClass: 'bottom-message'
                 })
+            }
+        }
+
+        step1NextBtn.onclick = handleStep1Next
+        
+        nicknameInput.onkeydown = async (e) => {
+            if (e.key === 'Enter') {
+                await handleStep1Next()
             }
         }
     }

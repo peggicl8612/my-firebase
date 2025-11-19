@@ -1,0 +1,96 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜拳遊戲 + 聊天室</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/index-D3FWT2SF.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BQh36kqN.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 登入區域 -->
+        <div id="login-section">
+            <!-- <h1>猜拳遊戲 + 聊天室</h1> -->
+            <button id="anonymous-login">匿名登入</button>
+            <div id="email-login">
+                 <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="密碼" required>
+                <button id="login-btn">登入</button>
+                <button id="register-btn">註冊</button>
+            </div>
+        </div>
+
+        <!-- 暱稱設定 (Step 1) -->
+        <div id="onboarding-step-1" style="display: none;">
+            <div class="onboarding-content">
+                <h2>請輸入您的暱稱</h2>
+                <input type="text" id="onboarding-nickname" placeholder="您的暱稱">
+                <button id="step-1-next" class="icon-btn"><span class="mdi mdi-arrow-right"></span></button>
+            </div>
+        </div>
+
+        <!-- 房間選擇 (Step 2) -->
+        <div id="onboarding-step-2" style="display: none;">
+            <div class="onboarding-content">
+                <h2>請選擇</h2>
+                <div class="step-2-buttons">
+                    <button id="step-2-create">建立房間</button>
+                    <div class="divider">OR</div>
+                    <div class="join-room-group">
+                        <input type="text" id="step-2-room-id" placeholder="輸入房間 ID">
+                        <button id="step-2-join" class="icon-btn"><span class="mdi mdi-arrow-right"></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主遊戲區域 -->
+        <div id="game-section" style="display: none;">
+            <div id="user-info"></div>
+            <button id="logout-btn">登出</button>
+            
+            <!-- 遊戲區域 -->
+            <div id="game-area">
+                <h2>猜拳遊戲</h2>
+                <div class="room-controls">
+                    <input type="text" id="room-id" placeholder="房間 ID">
+                    <button id="copy-room-btn" title="複製房間 ID" style="display: none;"><span class="mdi mdi-content-copy"></span></button>
+                    <button id="create-room">建立房間</button>
+                    <button id="join-room">加入房間</button>
+                </div>
+                
+                <div id="game-status"></div>
+                 <div id="choices">
+                    <button class="choice-btn" data-choice="rock">石頭</button>
+                    <button class="choice-btn" data-choice="paper">布</button>
+                    <button class="choice-btn" data-choice="scissors">剪刀</button>
+                </div>
+            </div>
+
+            <!-- 聊天室區域 -->
+            <div id="chat-area">
+                <h2>聊天室</h2>
+                <div id="messages"></div>
+                <div id="message-input">
+                    <input type="text" id="message-text" placeholder="輸入訊息...">
+                    <button id="send-btn">發送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 遊戲結果遮罩 -->
+    <div id="game-result-overlay" style="display: none;">
+        <div class="overlay-content">
+            <h2 id="result-title">遊戲結束</h2>
+            <div id="result-message"></div>
+            <button id="overlay-play-again-btn">再來一局</button>
+        </div>
+    </div>
+
+</body>
+</html>
