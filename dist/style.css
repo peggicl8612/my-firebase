@@ -15,14 +15,20 @@ body {
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 /* 登入區域 */
 #login-section {
+  margin: 0 auto;
   background: white;
+  width: 50vw;
   border-radius: 12px;
-  padding: 40px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  padding:  40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
   text-align: center;
 }
 
@@ -78,18 +84,58 @@ button {
   border-radius: 4px;
  }
 
+#google-login {
+  height: 40px;
+  padding: 10px 16px;
+  width: 100%;
+  max-width: 400px;
+  font-size: 14px;
+  background: #3c3c3c;
+  border: 1px solid #e0e0e0;
+  color: #fff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px auto;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+#google-login img {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#google-login:hover {
+  background: #535365;
+  border-color: #d0d0d0;
+}
+
+#google-icon  {
+  flex-shrink: 0;
+  display: block;
+  z-index: 1;
+}
+
 #login-btn,
 #register-btn {
-  height: 30px;
-  padding: 2px 6px;
+  height: 40px;
+  padding: 10px 16px;
   font-size: 14px;
-  background: #726e6e;
-  color: white;
+  background: #fff;
+  color: 000;
   border-radius: 4px;
+  display: flex;
+  align-items: center;
+  border: 2px dashed #726e6e;
+  justify-content: center;
+  gap: 4px;
  }
 
 #anonymous-login:hover {
-background-color: #777;
+background-color: #4d4a4a;
 border: 2px dashed #eee;
 color: #fff;
 transform: translateY(-2px);
@@ -97,18 +143,20 @@ transform: translateY(-2px);
 
 #login-btn:hover,
 #register-btn:hover {
-  background: #948f8f;
+  background: #4d4a4a;
+  border: 2px dashed #eee;
+  color: #eee;
   transform: translateY(-2px);
  }
 
 #logout-btn {
   font-size: 14px;
-  min-width: 120px;
+  min-width: 100px;
   height: auto;
-  background: #b26339;
-  color: white;
-  margin-bottom: 10px;
-}
+  background: #fff;
+  color: #000;
+  border: 2px dashed #726e6e;
+ }
 
 #logout-btn:hover {
    background: #d32f2f;
@@ -116,27 +164,42 @@ transform: translateY(-2px);
 
 /* 遊戲區域 */
 #game-section {
-  background: white;
+   background: white;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
- 
+/* 頂部區域：用戶資訊和登出按鈕 */
+#game-section > #user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 0;
+}
 
 #user-info {
   font-size: 18px;
   color: #333;
-  margin-bottom: 10px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-#game-area {
-  margin-bottom: 10px;
-   border-bottom: 2px solid #e0e0e0;
+/* 登出按鈕位置 */
+#logout-btn {
+  margin-left: auto;
+  align-self: flex-start;
 }
 
-#game-area h2 {
+ 
+
+
+#game-area h3 {
   color: #333;
   margin-bottom: 10px;
 }
@@ -163,8 +226,16 @@ transform: translateY(-2px);
   background: #575555;
 }
 
+/* 遊戲內容容器 - game-status 和 choices 的父容器 */
+#game-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+   align-items: center;
+}
+
 #game-status {
-  margin: 20px 0;
+  margin: 0;
   padding: 15px;
   background: #f5f5f5;
   border-radius: 8px;
@@ -179,10 +250,12 @@ transform: translateY(-2px);
 #choices {
   display: flex;
   width: 100%;
-  gap: 100px;
-  justify-content: center;
-  margin-top: 10px;
-}
+  text-align: center;
+   justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  margin: 20px 0
+ }
 
 .choice-btn {
   background: #514c44;
@@ -190,20 +263,21 @@ transform: translateY(-2px);
   padding: 12px 16px;
   font-size: 18px;
   width: 100%;
-  max-width: 100px;
+   max-width: 80px;
   transition: all 0.3s ease;
   border: 2px solid transparent;
-  margin-bottom: 10px;
-   }
+    }
 
 .choice-btn:hover {
   background: #7e766a;
- }
+  transform: scale(1.05);
+}
 
 .choice-btn.selected {
   background: #774b2e;
   border-color: #b99b88;
-   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
   font-weight: bold;
 }
 
@@ -213,8 +287,26 @@ transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
 }
 
+/* 遊戲和聊天室的容器 - 左右排列 */
+#game-section {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+#game-section > #game-area {
+  flex: 1;
+  min-width: 0;
+}
+
+#game-section > #chat-area {
+  flex: 1;
+  min-width: 0;
+}
+
 /* 聊天室區域 */
-#chat-area h2 {
+#chat-area h3 {
   color: #333;
   margin-bottom: 10px;
 }
@@ -281,7 +373,11 @@ transform: translateY(-2px);
 .room-controls {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+   margin-bottom: 15px;
+}
+
+.room-controls h3 {
+  margin-right: 10px;
 }
 
 #copy-room-btn {
@@ -426,7 +522,7 @@ transform: translateY(-2px);
     max-width: 400px;
 }
 
-.onboarding-content h2 {
+.onboarding-content h3 {
     margin-bottom: 20px;
     color: #333;
 }
@@ -521,6 +617,834 @@ transform: translateY(-2px);
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   響應式設計 - 斷點定義
+   xs: < 576px (手機)
+   sm: ≥ 576px (大手機)
+   md: ≥ 768px (平板)
+   lg: ≥ 992px (桌面)
+   xl: ≥ 1200px (大桌面)
+   ============================================ */
+
+/* 超小手機 - 390px 及以下 */
+@media (max-width: 390px) {
+  body {
+    padding: 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  #app {
+    height: auto;
+    min-height: 100vh;
+    }
+
+  #login-section {
+    width: 85vw;
+    padding: 20px;
+     border-radius: 8px;
+  }
+
+  #login-section h1 {
+    font-size: 1.3em;
+    margin-bottom: 15px;
+  }
+
+  #email-login {
+    max-width: 100%;
+    gap: 12px;
+    margin-top: 15px;
+  }
+
+  #email-login input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  #google-login {
+    max-width: 100%;
+    font-size: 12px;
+    padding: 8px 10px;
+    height: 36px;
+    margin: 12px auto;
+  }
+
+  #google-login img {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+  }
+
+  #anonymous-login {
+    max-width: 100%;
+    font-size: 12px;
+    height: 32px;
+    padding: 6px 10px;
+  }
+
+  #login-btn,
+  #register-btn {
+    font-size: 12px;
+    padding: 8px 12px;
+    height: 36px;
+    width: 100%;
+  }
+
+  /* 遊戲區域 */
+  #game-section {
+    padding: 12px;
+    width: 100%;
+    margin: 5px 0;
+    border-radius: 8px;
+  }
+
+  #user-info {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .avatar-preview{
+     width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    border: 2px solid #ddd;
+    object-fit: cover;
+  }
+
+  #avatar-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  #game-area h3 {
+    font-size: 1.2em;
+    margin-bottom: 8px;
+  }
+
+  .room-controls {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+    margin-bottom: 12px;
+  }
+
+  #room-id {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0;
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  #create-room,
+  #join-room {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 5px;
+    font-size: 12px;
+    padding: 8px 12px;
+    height: 36px;
+  }
+
+  #copy-room-btn {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 8px;
+    padding: 8px;
+    height: 36px;
+  }
+
+  #game-content {
+    grid-template-columns: 1fr;
+    gap: 15px;
+   }
+
+  #game-status {
+    padding: 10px;
+    margin: 0;
+    font-size: 13px;
+  }
+
+  #game-status p {
+    font-size: 12px;
+    margin: 3px 0;
+  }
+
+  #upload-avatar-btn {
+    font-size: 14px;
+   padding: 4px 8px;
+   border-radius: 4px;
+   background: #333;
+   color: #fff;
+   margin-top: 10px;
+ }
+
+  #choices {
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+     justify-content: center;
+  }
+
+  .choice-btn {
+    max-width: 80px;
+     font-size: 14px;
+    padding: 10px 12px;
+   }
+
+  /* 聊天室 */
+  #chat-area {
+    margin-top: 15px;
+  }
+
+  #chat-area h3 {
+    font-size: 1.2em;
+    margin-bottom: 8px;
+  }
+
+  #messages {
+    height: 180px;
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .message {
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+
+  .message strong {
+    font-size: 11px;
+  }
+
+  .message small {
+    font-size: 10px;
+  }
+
+  #message-input {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #message-text {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  #send-btn {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  #logout-btn {
+    font-size: 12px;
+    min-width: 100px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+
+  /* Onboarding */
+  #onboarding-step-1,
+  #onboarding-step-2 {
+    padding: 10px;
+  }
+
+  .onboarding-content {
+    padding: 20px 15px;
+    width: 95%;
+    max-width: 100%;
+  }
+
+  .onboarding-content h3 {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+
+  #onboarding-nickname {
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .icon-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+
+  .step-2-buttons {
+    gap: 12px;
+  }
+
+  #step-2-create {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .divider {
+    font-size: 12px;
+    margin: 3px 0;
+  }
+
+  .join-room-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #step-2-room-id {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 0;
+  }
+
+  #step-2-join {
+    width: 100%;
+    border-radius: 8px;
+    height: 40px;
+  }
+
+  /* Overlay */
+  .overlay-content {
+    padding: 25px 15px;
+    width: 95%;
+    max-width: 100%;
+  }
+
+  #result-title {
+    font-size: 1.3em;
+    margin-bottom: 15px;
+  }
+
+  #overlay-play-again-btn {
+    padding: 12px 30px;
+    font-size: 1em;
+    margin-top: 15px;
+  }
+}
+
+/* XS - 手機 (391px - 575px) */
+@media (min-width: 391px) and (max-width: 575.98px) {
+  body {
+    padding: 10px;
+    overflow-y: auto;
+  }
+
+  #app {
+    height: auto;
+    min-height: 100vh;
+     padding: 10px 0;
+  }
+
+  #login-section {
+    width: 70vw;
+   }
+
+  #login-section h1 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+  }
+
+  #email-login {
+    max-width: 100%;
+  }
+
+  #google-login {
+    max-width: 100%;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  #anonymous-login {
+    max-width: 100%;
+    font-size: 13px;
+  }
+
+  #login-btn,
+  #register-btn {
+    font-size: 13px;
+    padding: 8px 12px;
+    height: 36px;
+  }
+
+  /* 遊戲區域 */
+  #game-section {
+    padding: 15px;
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  #user-info {
+    font-size: 16px;
+  }
+
+  #user-name-avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  
+
+  .room-controls {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  #room-id {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  #create-room,
+  #join-room {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+
+  #copy-room-btn {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  #game-content {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  #upload-avatar-btn {
+    font-size: 14px;
+   padding: 4px 8px;
+   border-radius: 4px;
+   background: #333;
+   color: #fff;
+   margin-top: 10px;
+ }
+
+  #choices {
+    width: 100%;
+    flex-direction: row;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    margin: 20px 0;
+ 
+  }
+
+  .choice-btn {
+    max-width: 80px;
+     font-size: 14px;
+    padding: 6px 12px;
+  }
+
+  /* 聊天室 */
+  #chat-area {
+    margin-top: 15px;
+  }
+
+  #messages {
+    height: 200px;
+    padding: 10px;
+  }
+
+  #message-input {
+    flex-direction: column;
+  }
+
+  #message-text {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  #send-btn {
+    width: 100%;
+  }
+
+  /* Onboarding */
+  .onboarding-content {
+    padding: 30px 20px;
+    width: 95%;
+  }
+
+  .onboarding-content h3 {
+    font-size: 1.3em;
+  }
+
+  .join-room-group {
+    flex-direction: column;
+  }
+
+  #step-2-room-id {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  #step-2-join {
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  /* Overlay */
+  .overlay-content {
+    padding: 30px 20px;
+    width: 95%;
+  }
+
+  #result-title {
+    font-size: 1.5em;
+  }
+}
+
+/* SM - 大手機 (≥ 576px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  body {
+    padding: 15px;
+    overflow-y: auto;
+  }
+
+  #app {
+    height: auto;
+    min-height: 100vh;
+     padding: 15px 0;
+  }
+
+  #login-section {
+    width: 70vw;
+    padding: 30px;
+  }
+
+  #login-section h1 {
+    font-size: 1.8em;
+  }
+
+  #google-login {
+    max-width: 100%;
+  }
+
+  .room-controls {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  #room-id {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  #game-content {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+
+  #upload-avatar-btn {
+    font-size: 14px;
+   padding: 4px 8px;
+   border-radius: 4px;
+   background: #333;
+   color: #fff;
+   margin-top: 10px;
+ }
+
+  #choices {
+    gap: 40px;
+    flex-wrap: nowrap;
+
+  }
+
+  .choice-btn {
+    max-width: 80px;
+  }
+
+  #messages {
+    height: 250px;
+  }
+}
+
+/* MD - 平板 (≥ 768px) - 保持上下排列 */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  #login-section {
+    width: 60vw;
+    padding: 35px;
+  }
+
+  #game-section {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  
+
+  #upload-avatar-btn {
+    font-size: 14px;
+   padding: 4px 8px;
+   border-radius: 4px;
+   background: #333;
+   color: #fff;
+   margin-top: 10px;
+ }
+   .room-controls {
+    flex-wrap: wrap;
+  }
+
+  #room-id {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  #game-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  #choices {
+    gap: 80px;
+  }
+
+  .choice-btn {
+    width: 80px;
+  }
+
+  #messages {
+    height: 280px;
+  }
+
+  #chat-area {
+    margin-top: 0;
+  }
+}
+
+/* LG - 桌面 (≥ 992px) - 左右排列 */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  #login-section {
+    width: 60vw;
+    padding: 40px;
+  }
+
+  #upload-avatar-btn {
+    font-size: 14px;
+   padding: 4px 8px;
+   border-radius: 4px;
+   background: #333;
+   color: #fff;
+   margin-top: 10px;
+ }
+
+  #game-section {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
+    gap: 30px;
+  }
+  
+  /* 用戶資訊佔據第一行左側 */
+  #game-section > #user-info {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  
+  /* 登出按鈕在第一行右側 */
+  #game-section > #logout-btn {
+    grid-column: 2;
+    grid-row: 1;
+    margin-left: 0;
+    align-self: flex-start;
+  }
+  
+  /* 遊戲區域在第二行左側 */
+  #game-section > #game-area {
+    grid-column: 1;
+    grid-row: 2;
+     border-bottom: none;
+     padding-right: 30px;
+     margin-right: 30px;
+  }
+  
+  /* 聊天室在第二行右側 */
+  #game-section > #chat-area {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 0;
+  }
+
+  #game-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+  }
+
+  #choices {
+    gap: 100px;
+  }
+
+  .choice-btn {
+    max-width: 80px;
+  }
+
+  #messages {
+    height: 300px;
+  }
+}
+
+/* XL - 大桌面 (≥ 1200px) - 左右排列 */
+@media (min-width: 1200px) {
+  #login-section {
+    width: 50%;
+    padding: 40px;
+  }
+
+  #upload-avatar-btn {
+     font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #333;
+    color: #fff;
+    margin-top: 10px;
+  }
+
+  #game-section {
+    width: 100%;
+    max-width: 1400px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
+    gap: 40px;
+    padding: 30px;
+  }
+  
+  /* 用戶資訊佔據第一行左側 */
+  #game-section > #user-info {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  
+  /* 登出按鈕在第一行右側 */
+  #game-section > #logout-btn {
+    grid-column: 2;
+    grid-row: 1;
+    margin-left: 0;
+    align-self: flex-start;
+  }
+  
+  /* 遊戲區域在第二行左側 */
+  #game-section > #game-area {
+    grid-column: 1;
+    grid-row: 2;
+     border-bottom: none;
+     padding-right: 40px;
+     margin-right: 40px;
+  }
+  
+  /* 聊天室在第二行右側 */
+  #game-section > #chat-area {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 0;
+  }
+
+  #game-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+  #choices {
+    gap: 120px;
+  }
+
+  .choice-btn {
+    max-width: 80px;
+  }
+
+  #messages {
+    height: 350px;
+  }
+
+  .onboarding-content {
+    max-width: 500px;
+    padding: 50px;
+  }
+}
+
+/* 橫向手機特殊處理 */
+@media (max-width: 767.98px) and (orientation: landscape) {
+  #app {
+    align-items: flex-start;
+    padding: 10px 0;
+  }
+
+  #login-section {
+    padding: 20px;
+  }
+
+  #game-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  
+
+
+  #messages {
+    height: 150px;
+  }
+
+  #game-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  #choices {
+    flex-direction: row;
+    gap: 30px;
+  }
+}
+
+/* 修正 body overflow 問題 */
+@media (max-width: 991.98px) {
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  #app {
+    overflow: visible;
+  }
+}
+
+/* 確保在超小屏幕上不會有橫向滾動 */
+@media (max-width: 390px) {
+  * {
+    max-width: 100%;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  button, input, select, textarea {
+    max-width: 100%;
+  }
 }
 
  

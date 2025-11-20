@@ -14,6 +14,10 @@
         <div id="login-section">
             <!-- <h1>猜拳遊戲 + 聊天室</h1> -->
             <button id="anonymous-login">匿名登入</button>
+            <button id="google-login">
+                <img id="google-icon" src="google.png" alt="Google" style="width: 18px; height: 18px; margin-right: 8px;">
+                使用 Google 登入
+            </button>
             <div id="email-login">
                  <input type="email" id="email" placeholder="Email" required>
                 <input type="password" id="password" placeholder="密碼" required>
@@ -48,7 +52,14 @@
 
         <!-- 主遊戲區域 -->
         <div id="game-section" style="display: none;">
-            <div id="user-info"></div>
+            <div id="user-info">
+                <div id="avatar-upload-section">
+                    <img id="avatar-preview" src="" alt="Avatar">
+                    <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+                    <button id="upload-avatar-btn">上傳大頭貼</button>
+                </div>
+                <span id="user-name"></span>
+            </div>
             <button id="logout-btn">登出</button>
             
             <!-- 遊戲區域 -->
@@ -61,11 +72,13 @@
                     <button id="join-room">加入房間</button>
                 </div>
                 
-                <div id="game-status"></div>
-                 <div id="choices">
-                    <button class="choice-btn" data-choice="rock">石頭</button>
-                    <button class="choice-btn" data-choice="paper">布</button>
-                    <button class="choice-btn" data-choice="scissors">剪刀</button>
+                <div class="game-content">
+                    <div id="game-status"></div>
+                    <div id="choices">
+                        <button class="choice-btn" data-choice="rock">石頭</button>
+                        <button class="choice-btn" data-choice="paper">布</button>
+                        <button class="choice-btn" data-choice="scissors">剪刀</button>
+                    </div>
                 </div>
             </div>
 

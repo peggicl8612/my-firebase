@@ -1,8 +1,9 @@
 // src/main.js
-import { loginAnonymously, onAuthChange, loginWithEmail, registerWithEmail, logout } from './auth'
+import { loginAnonymously, onAuthChange, loginWithEmail, registerWithEmail, loginWithGoogle, logout, handleRedirectResult } from './auth'
 import { sendMessage, listenToMessages, Message } from './chat'
 import { createGameRoom, joinGameRoom, makeChoice, listenToGame, resetGame, leaveGameRoom } from './game'
-import { auth } from '../firebase'
+import { ref, uploadBytes, getDownloadURL} from 'firebase/storage'
+import { auth, storage } from '../firebase'
 import { ElMessage } from 'element-plus'
 import 'element-plus/dist/index.css'
 
@@ -10,10 +11,46 @@ let unsubscribeChat: (() => void) | null = null
 let unsubscribeGame: (() => void) | null = null
 let currentRoomId: string | null = null
 
-// 強制在頁面載入時登出，確保顯示登入頁面
-logout().catch(console.error)
+// 檢查是否是 Google redirect 回調
+const urlParams = new URLSearchParams(window.location.search)
+const isRedirectCallback = urlParams.has('__firebase_request_key') || 
+                          window.location.hash.includes('__firebase_request_key')
 
- 
+// 如果不是 redirect 回調，自動登出（確保每次打開都顯示登入畫面）
+if (!isRedirectCallback) {
+    // 立即登出，清除之前的登入狀態
+    logout().catch(() => {
+        // 如果已經登出，忽略錯誤
+    })
+}
+
+// 處理 Google 登入的 redirect 回調（在頁面載入時檢查）
+handleRedirectResult().then((user) => {
+    if (user) {
+        console.log('Google 登入成功 (redirect):', user)
+        ElMessage({
+            message: 'Google 登入成功',
+            type: 'success',
+            customClass: 'custom-message'
+        })
+        // 清除 URL 參數
+        if (urlParams.has('__firebase_request_key')) {
+            const newUrl = window.location.pathname
+            window.history.replaceState({}, '', newUrl)
+        }
+    }
+}).catch((error: any) => {
+    // 只有在有實際錯誤時才顯示（不是因為沒有 redirect 結果）
+    if (error.code && error.code !== 'auth/popup-closed-by-user') {
+        console.error('處理 redirect 登入失敗:', error)
+        ElMessage({
+            message: 'Google 登入失敗',
+            type: 'error',
+            customClass: 'custom-message'
+        })
+    }
+})
+
 // 重置頁面狀態的函數
 function resetPageState() {
     // 清空聊天室
@@ -60,7 +97,7 @@ function resetPageState() {
 onAuthChange((user) => {
     if (user) {
         const loginSection = document.getElementById('login-section')
-        const userInfo = document.getElementById('user-info')
+        const userNameSpan = document.getElementById('user-name')
         if (loginSection) loginSection.style.display = 'none'
         
         // 顯示引導頁面 Step 1
@@ -75,8 +112,16 @@ onAuthChange((user) => {
 
         // 使用 auth.currentUser 獲取最新的用戶信息（包括更新後的 displayName）
         const currentUser = auth.currentUser
-        if (userInfo && currentUser) {
-            userInfo.textContent = `使用者${currentUser.displayName || '匿名用戶'}`
+         if (userNameSpan && currentUser) {
+            userNameSpan.textContent = `使用者：${currentUser.displayName || '匿名用戶'}`
+        }
+
+        const avatarPreview = document.getElementById('avatar-preview') as HTMLImageElement
+        if (avatarPreview && currentUser?.photoURL) {
+            avatarPreview.src = currentUser.photoURL
+        } else if (avatarPreview) {
+            // 使用預設頭像 SVG
+            avatarPreview.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iI2RkZCIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1zaXplPSI0MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSI+77yBPC90ZXh0Pjwvc3ZnPg=='
         }
         // resetPageState() // 暫時不重置，因為要顯示引導頁
         initGame()
@@ -176,6 +221,62 @@ if (loginBtn && emailInput && passwordInput) {
     })
 }
 
+// Google 登入
+const googleLoginBtn = document.getElementById('google-login')
+if (googleLoginBtn) {
+    googleLoginBtn.addEventListener('click', async () => {
+        await handleGoogleLogin()
+    })
+}
+
+
+async function handleGoogleLogin() {
+    try {
+        const user = await loginWithGoogle()
+        if (user) {
+            // 只有在 popup 成功時才會執行這裡
+            console.log('Google 登入成功:', user)
+            ElMessage({
+                message: 'Google 登入成功',
+                type: 'success',
+                customClass: 'custom-message'
+            })
+        }
+        // 如果是 redirect，user 會是 null，頁面會跳轉，所以不會執行到這裡
+    } catch (error: any) {
+        console.error('Google 登入失敗:', error)
+        
+        // 如果是 redirect，不會進入這裡（因為會直接跳轉）
+        // 只有在 popup 被用戶關閉或其他錯誤時才會進入
+        if (error.code === 'auth/popup-closed-by-user') {
+            // 用戶主動關閉，不顯示錯誤訊息
+            return
+        }
+        
+        // 處理特定的錯誤情況
+        let errorMessage = 'Google 登入失敗，請檢查瀏覽器設定'
+        
+        if (error.code === 'auth/redirect-failed' || 
+            error.message?.includes('403') ||
+            error.message?.includes('forbidden') ||
+            error.message?.includes('disallowed_useragent')) {
+            errorMessage = 'Line 內建瀏覽器不支援 Google 登入。請使用 Chrome 或 Safari 瀏覽器開啟此網站，或複製連結到外部瀏覽器開啟'
+        } else if (error.code === 'auth/popup-blocked') {
+            errorMessage = '彈窗被瀏覽器阻擋，請允許彈窗或使用外部瀏覽器'
+        } else if (error.code === 'auth/unauthorized-domain') {
+            errorMessage = '未授權的網域，請檢查 Firebase Console 中的授權域名設定'
+        }
+        
+        ElMessage({
+            message: errorMessage,
+            type: 'error',
+            duration: 6000,
+            customClass: 'custom-message'
+        })
+    }
+}
+
+
 // 註冊
 const registerBtn = document.getElementById('register-btn')
 if (registerBtn && emailInput && passwordInput) {
@@ -196,9 +297,9 @@ if (registerBtn && emailInput && passwordInput) {
 
                     // 更新用戶名顯示（使用最新的 auth.currentUser）
                     const currentUser = auth.currentUser
-                    const userInfo = document.getElementById('user-info')
-                    if (userInfo && currentUser) {
-                        userInfo.textContent = `使用者${currentUser.displayName || userName || '匿名用戶'}`
+                    const userNameSpan = document.getElementById('user-name')
+                    if (userNameSpan && currentUser) {
+                        userNameSpan.textContent = `使用者：${currentUser.displayName || userName || '匿名用戶'}`
                     }
                     
                     // 確保顯示 Step 1 (雖然 onAuthChange 應該已經處理了，但為了保險起見)
@@ -369,8 +470,8 @@ function initGame() {
                     const { updateProfile } = await import('firebase/auth')
                     await updateProfile(auth.currentUser, { displayName: nickname })
                     // 更新歡迎訊息
-                    const userInfo = document.getElementById('user-info')
-                    if (userInfo) userInfo.textContent = `使用者：${nickname}`
+                    const userNameSpan = document.getElementById('user-name')
+                    if (userNameSpan) userNameSpan.textContent = `使用者：${nickname}`
                 }
                 if (step1) step1.style.display = 'none'
                 if (step2) step2.style.display = 'flex'
@@ -501,6 +602,98 @@ function initGame() {
         }
     }
     
+    // 大頭貼上傳
+    const avatarInput = document.getElementById('avatar-input') as HTMLInputElement
+    const avatarPreview = document.getElementById('avatar-preview') as HTMLImageElement
+    const uploadAvatarBtn = document.getElementById('upload-avatar-btn')
+    
+    if (avatarInput && avatarPreview && uploadAvatarBtn) {
+        // 點擊按鈕觸發檔案選擇
+        uploadAvatarBtn.onclick = () => {
+            avatarInput.click()
+        }
+
+        // 監聽檔案選擇
+        avatarInput.onchange = async (e) => {
+            const file = (e.target as HTMLInputElement).files?.[0]
+            if (!file) return
+            
+            if (!file.type.startsWith('image/')) {
+                ElMessage({
+                    message: '請選擇圖片檔案',
+                    type: 'warning',
+                    offset: window.innerHeight - 100,
+                    customClass: 'bottom-message'
+                })
+                return
+            }
+
+            if (file.size > 1024 * 1024 * 5) {
+                ElMessage({
+                    message: '檔案大小不能超過 5MB',
+                    type: 'warning',
+                    offset: window.innerHeight - 100,
+                    customClass: 'bottom-message'
+                })
+                return
+            }
+
+            try {
+                // 
+                const reader = new FileReader()
+                reader.onload = async (e) => {
+                    if (avatarPreview && e.target?.result) {
+                        avatarPreview.src = e.target.result as string
+                        // 強制設定樣式，確保圖片正確裁切
+                        avatarPreview.style.width = '100px'
+                        avatarPreview.style.height = '100px'
+                        avatarPreview.style.objectFit = 'cover'
+                        avatarPreview.style.objectPosition = 'center'
+                        avatarPreview.style.borderRadius = '50%'
+                        avatarPreview.style.display = 'block'
+                    }  
+                }
+                reader.readAsDataURL(file)
+
+                // 上傳檔案
+                const downloadURL = await uploadAvatar(file)
+
+                // 更新 UI
+                if (avatarPreview) {
+                    avatarPreview.src = downloadURL
+                    // 再次確保樣式正確
+                    avatarPreview.style.width = '100px'
+                    avatarPreview.style.height = '100px'
+                    avatarPreview.style.objectFit = 'cover'
+                    avatarPreview.style.objectPosition = 'center'
+                    avatarPreview.style.borderRadius = '50%'
+                    avatarPreview.style.display = 'block'
+                }
+
+                // 更新用戶資訊顯示
+                const userNameSpan = document.getElementById('user-name')
+                if (userNameSpan && auth.currentUser) {
+                    userNameSpan.textContent = `使用者：${auth.currentUser.displayName || '匿名用戶'}`
+                }
+                ElMessage({
+                    message: '大頭貼上傳成功',
+                    type: 'success',
+                    offset: window.innerHeight - 100,
+                    customClass: 'bottom-message'
+                })
+            } catch (error) {
+                console.log('上傳大頭貼失敗', error)
+                 ElMessage({
+                    message: '上傳大頭貼失敗',
+                    type: 'error',
+                    offset: window.innerHeight - 100,
+                    customClass: 'bottom-message'
+                })
+            }
+        } 
+    } 
+
+
     // 出拳
     document.querySelectorAll('.choice-btn').forEach(btn => {
         (btn as HTMLElement).onclick = async () => {
@@ -526,6 +719,7 @@ function initGame() {
     })
 }
 
+// 更新遊戲 UI
 function updateGameUI(gameData: any) {
     const statusDiv = document.getElementById('game-status')
     if (statusDiv) {
@@ -629,4 +823,33 @@ function updateGameUI(gameData: any) {
             ${resultText}
         `
     }
+}
+
+// 上傳文件，要同步操作所以使用 async 函數
+async function uploadAvatar(file: File) {
+    try { 
+        const user = auth.currentUser
+        if (!user) throw new Error('User not authenticated')
+        
+        /* 建立檔案路徑 */
+        // 取得檔案副檔名
+        const fileExt = file.name.split('.').pop()
+        const fileName = `avatar_${Date.now()}.${fileExt}`
+        const storageRef = ref(storage, `avatars/${user.uid}/${fileName}`)
+
+        // 上傳檔案
+        const snapshot = await uploadBytes(storageRef, file)
+
+        // 取得下載 URL
+        const downloadURL = await getDownloadURL(snapshot.ref)
+
+        // 更新用戶的 photoURL
+        const { updateProfile } = await import('firebase/auth')
+        await updateProfile(user, { photoURL: downloadURL})
+
+        return downloadURL
+    } catch (error) {
+        console.log('上傳文件失敗', error)
+        throw error
+     }
 }
