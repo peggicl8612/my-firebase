@@ -89,7 +89,7 @@ button {
   padding: 10px 16px;
   width: 100%;
   max-width: 400px;
-  font-size: 14px;
+   font-size: 14px;
   background: #3c3c3c;
   border: 1px solid #e0e0e0;
   color: #fff;
@@ -254,38 +254,29 @@ transform: translateY(-2px);
    justify-content: center;
   align-items: center;
   flex-wrap: nowrap;
-  margin: 20px 0
- }
+  margin: 20px 0;
+  }
 
 .choice-btn {
-  background: #514c44;
-  color: white;
-  padding: 12px 16px;
-  font-size: 18px;
-  width: 100%;
-   max-width: 80px;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-    }
+   transition: all 0.3s ease;
+  margin-right: 35px;
+  background: transparent;
+  }
+  .choice-btn img {
+    width: 100px;
+    height: auto;
+    object-fit:cover;
+  }
 
 .choice-btn:hover {
-  background: #7e766a;
-  transform: scale(1.05);
+   transform: scale(1.05);
 }
 
 .choice-btn.selected {
-  background: #774b2e;
-  border-color: #b99b88;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
-  font-weight: bold;
-}
+   transform: scale(1.05);
+ }
 
-.choice-btn.opponent-choice {
-  background: #2196f3;
-  border-color: #1565c0;
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
-}
+ 
 
 /* 遊戲和聊天室的容器 - 左右排列 */
 #game-section {
@@ -338,6 +329,27 @@ transform: translateY(-2px);
   display: block;
   margin-top: 5px;
   font-size: 12px;
+}
+
+/* AI 訊息樣式 */
+.message.ai-message {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-left: 4px solid #fbbf24;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.message.ai-message strong {
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.message.ai-message span {
+  color: white;
+}
+
+.message.ai-message small {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 #message-input {
@@ -777,16 +789,9 @@ transform: translateY(-2px);
      justify-content: center;
   }
 
-  .choice-btn {
-    max-width: 80px;
-     font-size: 14px;
-    padding: 10px 12px;
-   }
 
   /* 聊天室 */
-  #chat-area {
-    margin-top: 15px;
-  }
+  
 
   #chat-area h3 {
     font-size: 1.2em;
@@ -1023,25 +1028,23 @@ transform: translateY(-2px);
 
   #choices {
     width: 100%;
-    flex-direction: row;
+     flex-direction: row;
     gap: 30px;
     align-items: center;
     justify-content: center;
     flex-wrap: nowrap;
     margin: 20px 0;
- 
   }
 
   .choice-btn {
     max-width: 80px;
-     font-size: 14px;
-    padding: 6px 12px;
+    margin-right: 35px;
   }
 
+   
+
   /* 聊天室 */
-  #chat-area {
-    margin-top: 15px;
-  }
+  
 
   #messages {
     height: 200px;
@@ -1152,10 +1155,7 @@ transform: translateY(-2px);
     flex-wrap: nowrap;
 
   }
-
-  .choice-btn {
-    max-width: 80px;
-  }
+ 
 
   #messages {
     height: 250px;
@@ -1204,18 +1204,12 @@ transform: translateY(-2px);
   #choices {
     gap: 80px;
   }
-
-  .choice-btn {
-    width: 80px;
-  }
+ 
 
   #messages {
     height: 280px;
   }
-
-  #chat-area {
-    margin-top: 0;
-  }
+ 
 }
 
 /* LG - 桌面 (≥ 992px) - 左右排列 */
@@ -1270,8 +1264,7 @@ transform: translateY(-2px);
   #game-section > #chat-area {
     grid-column: 2;
     grid-row: 2;
-    margin-top: 0;
-  }
+   }
 
   #game-content {
     grid-template-columns: 1fr 1fr;
@@ -1281,10 +1274,7 @@ transform: translateY(-2px);
   #choices {
     gap: 100px;
   }
-
-  .choice-btn {
-    max-width: 80px;
-  }
+ 
 
   #messages {
     height: 300px;
@@ -1347,8 +1337,7 @@ transform: translateY(-2px);
   #game-section > #chat-area {
     grid-column: 2;
     grid-row: 2;
-    margin-top: 0;
-  }
+   }
 
   #game-content {
     grid-template-columns: 1fr 1fr;
@@ -1358,10 +1347,7 @@ transform: translateY(-2px);
   #choices {
     gap: 120px;
   }
-
-  .choice-btn {
-    max-width: 80px;
-  }
+ 
 
   #messages {
     height: 350px;

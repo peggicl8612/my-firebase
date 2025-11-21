@@ -6,6 +6,9 @@ import { ref, uploadBytes, getDownloadURL} from 'firebase/storage'
 import { auth, storage } from '../firebase'
 import { ElMessage } from 'element-plus'
 import 'element-plus/dist/index.css'
+import { chatWithAI, clearConversationHistory } from './ai'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { db } from '../firebase'
 
 let unsubscribeChat: (() => void) | null = null
 let unsubscribeGame: (() => void) | null = null
@@ -229,7 +232,6 @@ if (googleLoginBtn) {
     })
 }
 
-
 async function handleGoogleLogin() {
     try {
         const user = await loginWithGoogle()
@@ -355,6 +357,11 @@ const logoutBtn = document.getElementById('logout-btn')
 if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
         try {
+            const currentUser = auth.currentUser
+            if (currentUser) {
+                clearConversationHistory(currentUser.uid)
+            }
+            
             // 如果在遊戲中，先離開房間
             if (currentRoomId) {
                 await leaveGameRoom(currentRoomId)
@@ -378,15 +385,26 @@ function initChat(startTime?: Date) {
         unsubscribeChat = null
     }
 
+    // AI 客服的用戶 ID（用於識別 AI 訊息）
+    const AI_USER_ID = 'AI_ASSISTANT';
+    const AI_USER_NAME = '🤖 客服小幫手';
+    
+    // 追蹤最後處理的訊息 ID，避免重複處理
+    let lastProcessedMessageId: string | null = null;
+    let isProcessingAI = false; // 防止同時處理多個 AI 請求
+
     // 監聽訊息
-    unsubscribeChat = listenToMessages((messages: Message[]) => {
+    unsubscribeChat = listenToMessages(async (messages: Message[]) => {
         messagesDiv.innerHTML = ''
         const currentUser = auth.currentUser
         
         messages.forEach((msg: Message) => {
             const msgDiv = document.createElement('div')
             const isSelf = currentUser && msg.userId === currentUser.uid
-            msgDiv.className = `message ${isSelf ? 'self' : 'other'}`
+            const isAI = msg.userId === AI_USER_ID
+            
+            // AI 訊息使用特殊樣式
+            msgDiv.className = `message ${isSelf ? 'self' : 'other'} ${isAI ? 'ai-message' : ''}`
             
             // 處理 timestamp：如果是 Timestamp 類型則使用 toDate()，否則直接使用
             const timestamp = msg.timestamp && typeof (msg.timestamp as any).toDate === 'function' 
@@ -402,6 +420,44 @@ function initChat(startTime?: Date) {
             messagesDiv.appendChild(msgDiv)
         })
         messagesDiv.scrollTop = messagesDiv.scrollHeight
+        
+        // AI 自動回覆邏輯
+        if (currentUser && messages.length > 0 && !isProcessingAI) {
+            const lastMessage = messages[messages.length - 1];
+            
+            // 只處理新訊息（不是 AI 自己的訊息，且不是當前用戶的訊息）
+            if (lastMessage.id && 
+                lastMessage.id !== lastProcessedMessageId &&
+                lastMessage.userId !== AI_USER_ID &&
+                lastMessage.userId !== currentUser.uid) {
+                
+                lastProcessedMessageId = lastMessage.id;
+                isProcessingAI = true;
+                
+                // 延遲 1-2 秒後回覆（模擬真人思考時間）
+                setTimeout(async () => {
+                    try {
+                        const aiResponse = await chatWithAI(
+                            lastMessage.text, 
+                            currentUser.uid
+                        );
+                        
+                        // 發送 AI 回應（使用特殊的 userId 標記）
+                        await addDoc(collection(db, "messages"), {
+                            text: aiResponse.response,
+                            userId: AI_USER_ID,
+                            userName: AI_USER_NAME,
+                            timestamp: serverTimestamp(),
+                        });
+                    } catch (error) {
+                        console.error('AI 自動回覆失敗:', error);
+                        // 不顯示錯誤給用戶，靜默失敗
+                    } finally {
+                        isProcessingAI = false;
+                    }
+                }, 1000 + Math.random() * 1000); // 1-2 秒隨機延遲
+            }
+        }
     }, startTime)
     
     // 發送訊息
@@ -428,9 +484,6 @@ function initChat(startTime?: Date) {
             }
         }
     }
-
-
-
 }
 
 // 遊戲初始化
@@ -759,9 +812,9 @@ function updateGameUI(gameData: any) {
             if (gameData.winner === 'draw') {
                 resultText = '<p style="color: orange; font-weight: bold;">平手！</p>'
             } else if ((gameData.winner === 'player1' && isPlayer1) || (gameData.winner === 'player2' && !isPlayer1)) {
-                resultText = '<p style="color: green; font-weight: bold;">🎉 你贏了！</p>'
+                resultText = '<p style="color: green; font-weight: bold;">You Win！</p>'
             } else {
-                resultText = '<p style="color: red; font-weight: bold;">😢 你輸了</p>'
+                resultText = '<p style="color: red; font-weight: bold;">Loser！</p>'
             }
             
             // 顯示遮罩
@@ -853,3 +906,5 @@ async function uploadAvatar(file: File) {
         throw error
      }
 }
+
+ 
