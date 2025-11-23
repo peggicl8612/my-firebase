@@ -4,6 +4,8 @@ my-firebase.json
 !package-lock.jsons
 node_modules
 .env
-firebase.ts
 firebase.json
 firebaseConfig.ts
+dist/
+**/firebase-debug.log
+**/firebase-debug.*.log
