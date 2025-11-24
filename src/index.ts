@@ -27,64 +27,6 @@ if (!isRedirectCallback) {
     })
 }
 
-// 檢測是否為 LINE 內建瀏覽器
-function isLineBrowser(): boolean {
-    const userAgent = navigator.userAgent.toLowerCase()
-    return userAgent.includes('line/')
-}
-
-// 跳轉到外部瀏覽器
-function openInExternalBrowser() {
-    const currentUrl = window.location.href
-    
-    // 檢測作業系統
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-    const isAndroid = /Android/.test(navigator.userAgent)
-    
-    if (isIOS) {
-        // iOS: 嘗試使用 Safari 打開
-        // 如果用戶安裝了 Chrome，也可以使用 chrome:// 或 googlechrome://
-        window.location.href = currentUrl.replace(/^https?:\/\//, 'googlechrome://')
-        // 如果 Chrome 未安裝，會失敗，然後嘗試 Safari
-        setTimeout(() => {
-            window.location.href = currentUrl
-        }, 500)
-    } else if (isAndroid) {
-        // Android: 使用 intent:// 打開 Chrome
-        const intentUrl = `intent://${currentUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=com.android.chrome;end`
-        window.location.href = intentUrl
-        // 如果 Chrome 未安裝，會失敗，然後使用默認瀏覽器
-        setTimeout(() => {
-            window.location.href = currentUrl
-        }, 500)
-    } else {
-        // 其他平台，直接在新窗口打開
-        window.open(currentUrl, '_blank')
-    }
-}
-
-// 在頁面載入時檢測 LINE 瀏覽器
-if (isLineBrowser()) {
-    // 檢查是否已經嘗試過跳轉（避免無限循環）
-    const hasTriedRedirect = sessionStorage.getItem('line_redirect_attempted')
-    
-    if (!hasTriedRedirect) {
-        sessionStorage.setItem('line_redirect_attempted', 'true')
-        
-        // 顯示提示訊息
-        ElMessage({
-            message: '檢測到 LINE 內建瀏覽器，正在跳轉到外部瀏覽器...',
-            type: 'info',
-            duration: 3000,
-            customClass: 'custom-message'
-        })
-        
-        // 延遲一下讓用戶看到訊息，然後跳轉
-        setTimeout(() => {
-            openInExternalBrowser()
-        }, 1000)
-    }
-}
 
 // 處理 Google 登入的 redirect 回調（在頁面載入時檢查）
 handleRedirectResult().then((user) => {
