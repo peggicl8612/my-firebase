@@ -6,13 +6,13 @@ import { getStorage} from 'firebase/storage'
 import {getAuth} from 'firebase/auth'
 
 const firebaseConfig = {
-    apiKey: "AIzaSyB1eY8labR815hpvML7lQYjKDGBpwxChfk",
-    authDomain: "my-firebase-12fb4.firebaseapp.com",
-    databaseURL: "https://my-firebase-12fb4-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "my-firebase-12fb4",
-    storageBucket: "my-firebase-12fb4.firebasestorage.app",
-    messagingSenderId: "251411595390",
-    appId: "1:251411595390:web:d9396d5b8165079ecf182f"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "my-firebase-12fb4.firebaseapp.com",
+    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || "https://my-firebase-12fb4-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "my-firebase-12fb4",
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "my-firebase-12fb4.firebasestorage.app",
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "251411595390",
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:251411595390:web:d9396d5b8165079ecf182f"
 };
 
 // Initialize Firebase

@@ -9,3 +9,4 @@ firebaseConfig.ts
 dist/
 **/firebase-debug.log
 **/firebase-debug.*.log
+.firebase/
